@@ -12,23 +12,23 @@ contract DonationPool is Ownable, UUPSUpgradeable {
     uint256 public nativeDonations;
 
     function donate(address token, uint256 amount) external {
-        require(IERC20(token).transferFrom(msg.sender,address(this), amount));
+        require(IERC20(token).transferFrom(msg.sender, address(this), amount));
         tokenDonations[token] += amount;
     }
 
     function donateNativeEth(uint256 amount) external payable {
-        require(msg.value >0 , "Must send some ETH");
+        require(msg.value > 0, "Must send some ETH");
         nativeDonations += msg.value;
     }
 
-    function withdrawAllBalance(address to,address token) external onlyOwner{
+    function withdrawAllBalance(address to, address token) external onlyOwner {
         uint256 balance = IERC20(token).balanceOf(address(this));
-        require(balance>0,"No balance to withdraw");
+        require(balance > 0, "No balance to withdraw");
         require(IERC20(token).transfer(to, balance));
         tokenDonations[token] = 0;
     }
 
-    function withdrawNativeEth() external onlyOwner{
+    function withdrawNativeEth() external onlyOwner {
         uint256 balance = address(this).balance;
         require(balance > 0, "No ETH to withdraw");
         nativeDonations = 0;
